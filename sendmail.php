@@ -1,47 +1,37 @@
 <?php
-// Remplace cette adresse par celle du client
-$to = "destinataire@example.com";
+// Configuration de l'adresse email de réception
+$destinataire = "ton-email@example.com"; // ⚠️ À remplacer par ton email
 
-// Sécurité basique
-function clean_input($data) {
-    return htmlspecialchars(stripslashes(trim($data)));
+// Sécuriser les données et vérifier leur présence
+$nom = isset($_POST['nom']) ? strip_tags(trim($_POST['nom'])) : null;
+$email = isset($_POST['email']) ? filter_var(trim($_POST['email']), FILTER_SANITIZE_EMAIL) : null;
+$message = isset($_POST['message']) ? strip_tags(trim($_POST['message'])) : null;
+
+// Validation
+if (!$nom || !$email || !$message || !filter_var($email, FILTER_VALIDATE_EMAIL)) {
+    header("Location: index.html?error=1");
+    exit();
 }
 
-// Vérifie que les données sont présentes
-if ($_SERVER["REQUEST_METHOD"] === "POST") {
-    $nom = clean_input($_POST["nom"] ?? '');
-    $email = clean_input($_POST["email"] ?? '');
-    $message = clean_input($_POST["message"] ?? '');
+// Préparation du message
+$sujet = "Nouveau message de contact";
+$contenu = "Nom : $nom\n";
+$contenu .= "Email : $email\n";
+$contenu .= "Message :\n$message\n";
 
-    // Validation de base
-    if (empty($nom) || empty($email) || empty($message)) {
-        http_response_code(400);
-        echo "Veuillez remplir tous les champs.";
-        exit;
-    }
+// En-têtes
+$headers = "From: $nom <$email>" . "\r\n" .
+           "Reply-To: $email" . "\r\n" .
+           "X-Mailer: PHP/" . phpversion();
 
-    if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
-        http_response_code(400);
-        echo "Adresse email invalide.";
-        exit;
-    }
+// Envoi
+$success = mail($destinataire, $sujet, $contenu, $headers);
 
-    // Préparation du mail
-    $subject = "Nouveau message de $nom";
-    $body = "Nom: $nom\nEmail: $email\n\nMessage:\n$message";
-    $headers = "From: $email\r\n";
-    $headers .= "Reply-To: $email\r\n";
-
-    // Envoi
-    if (mail($to, $subject, $body, $headers)) {
-        echo "✅ Message envoyé avec succès.";
-    } else {
-        http_response_code(500);
-        echo "❌ Erreur lors de l'envoi du message.";
-    }
+// Redirection
+if ($success) {
+    header("Location: index.html?success=1");
 } else {
-    http_response_code(403);
-    echo "Méthode non autorisée.";
+    header("Location: index.html?error=1");
 }
+exit();
 ?>
-

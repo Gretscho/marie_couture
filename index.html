@@ -178,37 +178,60 @@
     
     <!-- End Horaires Section -->
 
-    <!-- Contact Section -->
+   <!-- Contact Section -->
+<section id="contact" class="contact">
+  <div class="container">
+    <div class="section-title">
+      <h2>Contact</h2>
+      <p>Adresse : 35 rue Patchwork, 44640, Saint Jean de Boiseau</p>
+    </div>
 
-    <section id="contact" class="contact">
-        <div class="container">
-          <div class="section-title">
-            <h2>Contact</h2>
-            <p>Adresse : 35 rue Patchwork, 44640, Saint Jean de Boiseau</p>
-          </div>
-      
-          <div class="row">
-            <div class="col-lg-8 mx-auto">
-              <form method="POST" action="templates/sendmail.php" class="contact-form">
-                <div class="form-group">
-                  <input type="text" class="form-control" name="nom" placeholder="Votre nom" required>
-                </div>
-                <div class="form-group">
-                  <input type="email" class="form-control" name="email" placeholder="Votre email" required>
-                </div>
-                <div class="form-group">
-                  <textarea class="form-control" name="message" placeholder="Votre message" rows="5" required></textarea>
-                </div>
-                <div class="text-center">
-                  <button type="submit" class="submit-btn">Envoyer</button>
-                </div>
-              </form>
-            </div>
-          </div>
-        </div>
-      </section>
+    <div class="row">
+      <div class="col-lg-8 mx-auto">
+        <form method="POST" action="sendmail.php" class="contact-form">
+          
+          
 
-    <!--End Contact Section -->
+          <div class="form-group">
+            <input type="text" class="form-control" name="nom" placeholder="Votre nom" required>
+          </div>
+          <div class="form-group">
+            <input type="email" class="form-control" name="email" placeholder="Votre email" required>
+          </div>
+          <div class="form-group">
+            <textarea class="form-control" name="message" placeholder="Votre message" rows="5" required></textarea>
+          </div>
+          <div class="text-center">
+            <button type="submit" class="submit-btn">Envoyer</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</section>
+<!-- End Contact Section -->
+
+<!-- Message de retour après l'envoi du formulaire -->
+<div id="form-message" class="alert" style="display: none;"></div>
+
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    const urlParams = new URLSearchParams(window.location.search);
+    const messageBox = document.getElementById("form-message");
+
+    if (urlParams.has("success")) {
+      messageBox.textContent = "✅ Message envoyé avec succès.";
+      messageBox.className = "alert alert-success";
+      messageBox.style.display = "block";
+    } else if (urlParams.has("error")) {
+      messageBox.textContent = "❌ Une erreur est survenue. Vérifiez vos informations.";
+      messageBox.className = "alert alert-danger";
+      messageBox.style.display = "block";
+    }
+  });
+</script>
+
+
   
   </main><!-- End #main -->
 
